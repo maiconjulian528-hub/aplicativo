@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Galinheiro - Completo</title>
+    <!-- Tailwind CSS para o visual moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones do Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Biblioteca de Gráficos Simples (Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-slate-100 font-sans antialiased max-w-md mx-auto min-h-screen shadow-lg relative pb-24">
+
+    <!-- ================= TELA 1: DASHBOARD PRINCIPAL ================= -->
+    <div id="tela-dashboard" class="block">
+        <!-- CABEÇALHO -->
+        <header class="bg-gradient-to-b from-amber-500 to-emerald-800 text-white p-6 rounded-b-[2rem] shadow-md">
+            <div class="flex justify-between items-start">
+                <div>
+                    <!-- Saudação Dinâmica via JavaScript -->
+                    <h1 id="saudacao-dinamica" class="text-2xl font-bold tracking-wide">Olá, Maicon!</h1>
+                    <p id="emoji-saudacao" class="text-xl mt-1">✨</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="bg-white/20 p-2 rounded-full">
+                        <i data-lucide="bell" class="w-6 h-6 text-amber-300"></i>
+                    </button>
+                    <div class="w-12 h-12 rounded-full bg-pink-200 border-2 border-white flex items-center justify-center overflow-hidden">
+                        <span class="text-2xl">👨‍🌾</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="p-4 -mt-4 space-y-6">
+            <!-- CARD RESUMO -->
+            <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-2 text-gray-500 text-sm font-medium mb-4">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-amber-600"></i>
+                    <span>Resumo de Hoje</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <div id="dash-ovos" class="text-4xl font-bold text-amber-500">0</div>
+                        <div class="text-xs text-gray-500 mt-0.5">🥚 Ovos coletados hoje</div>
+                    </div>
+                    <div>
+                        <div id="dash-galinhas" class="text-4xl font-bold text-gray-800">0</div>
+                        <div class="text-xs text-gray-500 mt-0.5">🐔 Galinhas ativas</div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100 my-3">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex items-baseline gap-1.5">
+                            <div id="dash-lucro" class="text-2xl font-bold text-emerald-500">R$ 0,00</div>
+                        </div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <span id="dash-lucro-tag" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded">↑ Lucro</span>
+                        </div>
+                    </div>
+                    <div>
+                        <!-- Nova seção de Despesa do Mês com status de dívida -->
+                        <div id="dash-despesa" class="text-2xl font-bold text-gray-800">R$ 0,00</div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <span id="dash-despesa-tag" class="bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">Sem gastos</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACESSO RÁPIDO -->
+            <section>
+                <div class="flex items-center gap-1 text-gray-800 font-bold text-lg mb-3">
+                    <span class="text-amber-500">⚡</span>
+                    <h2>Acesso Rápido</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="navegarPara('postura')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center active:scale-95 transition-transform">
+                        <div class="bg-blue-50 p-2 rounded-lg mb-2"><i data-lucide="trending-up" class="w-6 h-6 text-blue-500"></i></div>
+                        <span class="text-xs font-bold text-gray-800 block">Postura</span>
+                        <span id="btn-ovos-txt" class="text-[10px] text-gray-400 mt-0.5">0 hoje</span>
+                    </button>
+                    <button onclick="navegarPara('financeiro')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center active:scale-95 transition-transform">
+                        <div class="bg-yellow-50 p-2 rounded-lg mb-2"><i data-lucide="dollar-sign" class="w-6 h-6 text-yellow-600"></i></div>
+                        <span class="text-xs font-bold text-gray-800 block">Financeiro</span>
+                        <span id="btn-financas-txt" class="text-[10px] text-gray-400 mt-0.5">R$ 0,00</span>
+                    </button>
+                    <button onclick="navegarPara('vendas')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center active:scale-95 transition-transform">
+                        <div class="bg-amber-50 p-2 rounded-lg mb-2"><i data-lucide="package" class="w-6 h-6 text-amber-700"></i></div>
+                        <span class="text-xs font-bold text-gray-800 block">Vendas</span>
+                        <span id="btn-vendas-txt" class="text-[10px] text-gray-400 mt-0.5">0 un/dúz</span>
+                    </button>
+                    <button onclick="navegarPara('lotes')" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center active:scale-95 transition-transform">
+                        <div class="bg-orange-50 p-2 rounded-lg mb-2"><i data-lucide="layers" class="w-6 h-6 text-orange-500"></i></div>
+                        <span class="text-xs font-bold text-gray-800 block">Lotes</span>
+                        <span id="btn-lotes-txt" class="text-[10px] text-gray-400 mt-0.5">0 ativos</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ================= TELA 2: PAINEL DE POSTURA ================= -->
+    <div id="tela-postura" class="hidden">
+        <header class="bg-gradient-to-b from-amber-500 to-amber-600 text-white p-4 rounded-b-[2rem] shadow-md">
+            <button onclick="navegarPara('dashboard')" class="text-sm font-semibold flex items-center gap-1 opacity-90 mb-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+            </button>
+            <div class="flex items-center gap-3 mt-1">
+                <div class="bg-white p-2 rounded-lg shadow-sm"><i data-lucide="trending-up" class="w-6 h-6 text-blue-500"></i></div>
+                <div>
+                    <h1 class="text-2xl font-bold">Painel de Postura</h1>
+                    <p class="text-xs opacity-90">Controle diário da produção de ovos</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-4 space-y-4">
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-base mb-3 flex items-center gap-1.5"><span>🥚</span> Quantos ovos hoje?</h2>
+                <div class="flex gap-3">
+                    <input id="input-ovos" type="number" placeholder="0" class="flex-1 border-2 border-gray-200 rounded-xl text-center text-2xl font-bold text-gray-700 focus:border-amber-500 focus:outline-none p-2">
+                    <button onclick="salvarProducaoDiaria()" class="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold px-6 rounded-xl shadow-md active:scale-95 transition-transform">Registrar</button>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-xl text-center shadow-sm border border-gray-100">
+                    <div id="meta-media" class="text-2xl font-bold text-amber-500">0</div>
+                    <div class="text-xs text-gray-400 font-medium mt-0.5">Média/dia</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl text-center shadow-sm border border-gray-100">
+                    <div id="meta-melhor" class="text-2xl font-bold text-emerald-500">0</div>
+                    <div class="text-xs text-gray-400 font-medium mt-0.5">Melhor dia</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl text-center shadow-sm border border-gray-100">
+                    <div id="meta-pior" class="text-2xl font-bold text-red-500">0</div>
+                    <div class="text-xs text-gray-400 font-medium mt-0.5">Pior dia</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl text-center shadow-sm border border-gray-100">
+                    <div id="meta-taxa" class="text-2xl font-bold text-gray-800">0%</div>
+                    <div class="text-xs text-gray-400 font-medium mt-0.5">Taxa postura</div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>📈</span> Production — Últimos 30 dias</h2>
+                <div class="w-full h-40"><canvas id="graficoProducao"></canvas></div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>📋</span> Histórico de Coletas</h2>
+                <div id="lista-historico" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ================= TELA 3: PAINEL FINANCEIRO ================= -->
+    <div id="tela-financeiro" class="hidden">
+        <header class="bg-emerald-600 text-white p-5 rounded-b-[2rem] shadow-md">
+            <button onclick="navegarPara('dashboard')" class="text-sm font-semibold flex items-center gap-1 opacity-90 mb-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+            </button>
+            <div class="flex items-center gap-3 mt-1">
+                <span class="text-2xl">💰</span>
+                <div>
+                    <h1 class="text-2xl font-bold">Controle Financeiro</h1>
+                    <p class="text-xs opacity-90">Receitas, despesas e lucro do galinheiro</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-4 space-y-4">
+            <section class="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-6 text-center shadow-sm">
+                <div class="text-gray-500 text-sm font-medium">Lucro do Mês</div>
+                <div id="fin-lucro-card" class="text-4xl font-extrabold text-emerald-600 my-2">R$ 0,00</div>
+                <div class="text-xs text-gray-700 font-medium mb-4">↑ Balanço Mensal</div>
+                
+                <div class="flex justify-center gap-6 text-xs font-bold pt-2 border-t border-emerald-200/50">
+                    <span class="text-emerald-600">Receita: <span id="fin-card-receita">R$ 0,00</span></span>
+                    <span class="text-rose-600">Despesa: <span id="fin-card-despesa">R$ 0,00</span></span>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-gray-800 font-bold text-sm flex items-center gap-1.5"><span>➕</span> Lançar Valor</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="input-fin-descricao" type="text" placeholder="Ex: Venda de Ovos" class="border-2 border-gray-200 rounded-xl p-2 text-xs text-gray-700 focus:border-emerald-500 focus:outline-none">
+                    <input id="input-fin-valor" type="number" placeholder="Valor R$" class="border-2 border-gray-200 rounded-xl p-2 text-xs font-bold text-gray-700 focus:border-emerald-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="salvarFinanceiro('entrada')" class="bg-emerald-600 text-white font-bold p-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-1">Registrar Entrada</button>
+                    <button onclick="salvarFinanceiro('saida')" class="bg-rose-600 text-white font-bold p-2 rounded-xl text-xs shadow-md flex items-center justify-center gap-1">Registrar Saída</button>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>📊</span> Receita vs Despesa</h2>
+                <div class="w-full h-44"><canvas id="graficoFinancasBarra"></canvas></div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>📋</span> Fluxo de Caixa / Histórico</h2>
+                <div id="lista-fin-historico" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ================= TELA 4: PAINEL DE VENDAS PRINCIPAL ================= -->
+    <div id="tela-vendas" class="hidden">
+        <header class="bg-gradient-to-b from-amber-600 to-amber-700 text-white p-4 rounded-b-[2rem] shadow-md">
+            <button onclick="navegarPara('dashboard')" class="text-sm font-semibold flex items-center gap-1 opacity-90 mb-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+            </button>
+            <div class="flex items-center gap-3 mt-1">
+                <div class="bg-white p-2 rounded-lg shadow-sm"><i data-lucide="package" class="w-6 h-6 text-amber-700"></i></div>
+                <div>
+                    <h1 class="text-2xl font-bold">Painel de Vendas</h1>
+                    <p class="text-xs opacity-90">Gerencie seus pedidos e clientes</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-4 space-y-4">
+            <section class="grid grid-cols-2 gap-3">
+                <button onclick="navegarPara('novo-pedido')" class="bg-amber-600 hover:bg-amber-700 text-white p-4 rounded-xl shadow-sm flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <div class="bg-white/20 p-2 rounded-lg mb-2"><i data-lucide="shopping-cart" class="w-6 h-6 text-white"></i></div>
+                    <span class="text-sm font-bold block">Novo Pedido</span>
+                </button>
+                <button onclick="navegarPara('clientes')" class="bg-white border border-gray-200 text-gray-800 p-4 rounded-xl shadow-sm flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                    <div class="bg-amber-50 p-2 rounded-lg mb-2"><i data-lucide="users" class="w-6 h-6 text-amber-600"></i></div>
+                    <span class="text-sm font-bold block">Clientes</span>
+                </button>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>📋</span> Pedidos Recentes</h2>
+                <div id="lista-pedidos-vendas" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ================= TELA 5: FORMULÁRIO DE NOVO PEDIDO ================= -->
+    <div id="tela-novo-pedido" class="hidden">
+        <main class="p-6 bg-slate-100 min-h-screen">
+            <button onclick="navegarPara('vendas')" class="text-blue-600 text-lg font-medium flex items-center gap-1 mb-6">← Voltar</button>
+            <div class="bg-white rounded-3xl p-6 shadow-sm space-y-5">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">Novo Pedido</h1>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium text-gray-500 block">Data</label>
+                    <input id="form-ped-data" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-gray-800 text-base focus:outline-none">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium text-gray-500 block">Cliente</label>
+                    <select id="form-ped-cliente" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-gray-800 text-base focus:outline-none"></select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium text-gray-500 block">Produto</label>
+                    <select id="form-ped-produto" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-gray-800 text-base focus:outline-none">
+                        <option value="Ovos">Ovos</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium text-gray-500 block">Quantidade</label>
+                    <input id="form-ped-qtd" type="number" value="1" min="1" oninput="calcularTotalPedido()" class="w-full bg-white border border-gray-200 rounded-xl p-3.5 text-gray-800 text-base focus:outline-none">
+                </div>
+                <div class="flex flex-col items-center justify-center py-2 bg-slate-50 rounded-xl border border-dashed border-gray-200 p-3">
+                    <div class="text-gray-500 text-xs font-medium mb-1">Valor do Pedido</div>
+                    <div class="text-2xl text-gray-900 font-black tracking-tight" id="form-ped-total">R$ 8,00</div>
+                    <button onclick="alterarPrecoBase()" class="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200 transition-colors">⚙️ Editar Preço Base</button>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium text-gray-500 block">Status</label>
+                    <select id="form-ped-status" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 text-gray-800 text-base focus:outline-none">
+                        <option value="Pago">Pago</option>
+                        <option value="Pendente">Pendente</option>
+                    </select>
+                </div>
+                <button onclick="finalizarPedidoFormulario()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold p-4 rounded-xl shadow-md text-base transition-all active:scale-[0.98] mt-2">Finalizar</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= TELA 6: GERENCIAMENTO DE CLIENTES ================= -->
+    <div id="tela-clientes" class="hidden">
+        <main class="p-6 bg-slate-100 min-h-screen space-y-4">
+            <button onclick="navegarPara('vendas')" class="text-blue-600 text-lg font-medium flex items-center gap-1 mb-2">← Voltar</button>
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm space-y-5">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Clientes</h1>
+                <input id="input-novo-cliente" type="text" placeholder="Nome" class="w-full bg-white border border-gray-300 rounded-xl p-4 text-gray-700 text-base focus:outline-none">
+                <button onclick="salvarNovoClienteTela()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium p-4 rounded-xl text-base shadow-sm">Salvar</button>
+            </div>
+            <div id="container-lista-clientes" class="space-y-3 pt-2 pb-12"></div>
+        </main>
+    </div>
+
+    <!-- ================= TELA 7: CONTROLE DE LOTES ================= -->
+    <div id="tela-lotes" class="hidden">
+        <header class="bg-gradient-to-b from-orange-500 to-orange-600 text-white p-4 rounded-b-[2rem] shadow-md">
+            <button onclick="navegarPara('dashboard')" class="text-sm font-semibold flex items-center gap-1 opacity-90 mb-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+            </button>
+            <div class="flex items-center gap-3 mt-1">
+                <div class="bg-white p-2 rounded-lg shadow-sm"><i data-lucide="layers" class="w-6 h-6 text-orange-500"></i></div>
+                <div>
+                    <h1 class="text-2xl font-bold">Controle de Lotes</h1>
+                    <p class="text-xs opacity-90">Gerencie a divisão das suas aves</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-4 space-y-4">
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-gray-800 font-bold text-sm flex items-center gap-1.5"><span>➕</span> Adicionar Novo Lote</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <input id="input-lote-nome" type="text" placeholder="Ex: Lote Poedeiras Claras" class="border-2 border-gray-200 rounded-xl p-2.5 text-xs text-gray-700 focus:outline-none">
+                    <input id="input-lote-qtd" type="number" placeholder="Qtd Galinhas" class="border-2 border-gray-200 rounded-xl p-2.5 text-xs font-bold text-gray-700 focus:outline-none">
+                </div>
+                <button onclick="salvarNovoLote()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold p-2.5 rounded-xl text-xs shadow-md flex items-center justify-center gap-1">Cadastrar Lote</button>
+            </section>
+
+            <section class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h2 class="text-gray-800 font-bold text-sm mb-3 flex items-center gap-1.5"><span>🐔</span> Seus Lotes Ativos</h2>
+                <div id="lista-lotes-ativos" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA (Textos removidos para visual limpo) -->
+    <nav id="barra-inferior" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 py-3 px-4 flex justify-between items-center text-center text-gray-400 z-50">
+        <button onclick="navegarPara('dashboard')" class="flex-1 flex flex-col items-center text-amber-600">
+            <i data-lucide="home" class="w-6 h-6"></i>
+        </button>
+        <button class="flex-1 flex flex-col items-center opacity-50"><i data-lucide="wrench" class="w-6 h-6"></i></button>
+        <button class="flex-1 flex flex-col items-center opacity-50"><i data-lucide="book-open" class="w-6 h-6"></i></button>
+        <button class="flex-1 flex flex-col items-center opacity-50"><i data-lucide="trophy" class="w-6 h-6"></i></button>
+        <button class="flex-1 flex flex-col items-center opacity-50"><i data-lucide="user" class="w-6 h-6"></i></button>
+    </nav>
+
+    <!-- PROGRAMAÇÃO DO APLICATIVO -->
+    <script>
+        lucide.createIcons();
+        let meuGrafico = null;
+        let meuGraficoFin = null;
+
+        const CLIENTES_PADRAO = ["Didio", "Eduardo", "Andrei", "Misael", "Madrinha", "Dona Neuza", "Beto", "Comadres"];
+        const LOTES_PADRAO = [
+            { id: 1, nome: "Lote Principal", aves: 15 },
+            { id: 2, nome: "Lote Frangas Novas", aves: 10 }
+        ];
+
+        window.onload = function() {
+            aplicarSaudacaoDinamica();
+            inicializarBancoClientes();
+            inicializarBancoLotes();
+            configurarDataFormulario();
+            atualizarTelas();
+        };
+
+        // Função para atualizar saudação com base nas horas
+        function aplicarSaudacaoDinamica() {
+            const h1 = document.getElementById('saudacao-dinamica');
+            const p = document.getElementById('emoji-saudacao');
+            if(!h1 || !p) return;
+
+            const horaAtual = new Date().getHours();
+            let saudacao = "";
+            let emoji = "";
+
+            if (horaAtual >= 5 && horaAtual < 12) {
+                saudacao = "Bom dia, Maicon!";
+                emoji = "☀️";
+            } else if (horaAtual >= 12 && horaAtual < 18) {
+                saudacao = "Boa tarde, Maicon!";
+                emoji = "🌤️";
+            } else {
+                saudacao = "Boa noite, Maicon!";
+                emoji = "🌙";
+            }
+
+            h1.innerText = saudacao;
+            p.innerText = emoji;
+        }
+
+        function obterPrecoUnitario() {
+            let precoSalvo = localStorage.getItem('preco_unitario_ovo');
+            return precoSalvo ? parseFloat(precoSalvo) : 8.00;
+        }
+
+        function id(el) { return document.getElementById(el); }
+
+        function alterarPrecoBase() {
+            let precoAtual = obterPrecoUnitario();
+            let novoPreco = prompt(`Qual o novo preço padrão da unidade/dúzia? (Preço atual: R$ ${precoAtual.toFixed(2)})`, precoAtual);
+            if (novoPreco !== null && !isNaN(novoPreco) && parseFloat(novoPreco) >= 0) {
+                localStorage.setItem('preco_unitario_ovo', parseFloat(novoPreco).toFixed(2));
+                calcularTotalPedido();
+            }
+        }
+
+        function inicializarBancoClientes() {
+            if (!localStorage.getItem('banco_clientes')) {
+                localStorage.setItem('banco_clientes', JSON.stringify(CLIENTES_PADRAO));
+            }
+            atualizarSelectClientesFormulario();
+            renderizarListaClientesTela();
+        }
+
+        function inicializarBancoLotes() {
+            if (!localStorage.getItem('banco_lotes')) {
+                localStorage.setItem('banco_lotes', JSON.stringify(LOTES_PADRAO));
+            }
+            renderizarListaLotes();
+        }
+
+        function atualizarSelectClientesFormulario() {
+            const selectCliente = id('form-ped-cliente');
+            if(!selectCliente) return;
+            const clientes = JSON.parse(localStorage.getItem('banco_clientes')) || CLIENTES_PADRAO;
+            selectCliente.innerHTML = '';
+            clientes.forEach(cli => {
+                const opt = document.createElement('option');
+                opt.value = cli; opt.text = cli; selectCliente.appendChild(opt);
+            });
+        }
+
+        function renderizarListaClientesTela() {
+            const container = id('container-lista-clientes');
+            if(!container) return;
+            const clientes = JSON.parse(localStorage.getItem('banco_clientes')) || CLIENTES_PADRAO;
+            container.innerHTML = '';
+            clientes.forEach((cli, index) => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-2xl p-4 pl-6 shadow-sm border border-gray-100/80 flex justify-between items-center group">
+                        <span class="text-gray-800 text-lg font-normal">${cli}</span>
+                        <button onclick="removerClienteDoBanco(${index})" class="text-xs text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-red-50 px-2 py-1 rounded-md">Excluir</button>
+                    </div>`;
+            });
+        }
+
+        function salvarNovoClienteTela() {
+            const input = id('input-novo-cliente');
+            const nome = input.value.trim();
+            if(nome === "") { alert("Por favor, digite um nome para salvar."); return; }
+            let clientes = JSON.parse(localStorage.getItem('banco_clientes')) || CLIENTES_PADRAO;
+            if(clientes.includes(nome)) { alert("Este cliente já está cadastrado."); return; }
+            clientes.push(nome);
+            localStorage.setItem('banco_clientes', JSON.stringify(clientes));
+            input.value = "";
+            atualizarSelectClientesFormulario();
+            renderizarListaClientesTela();
+        }
+
+        function removerClienteDoBanco(index) {
+            if(confirm("Deseja remover este cliente da sua lista?")) {
+                let clientes = JSON.parse(localStorage.getItem('banco_clientes')) || CLIENTES_PADRAO;
+                clientes.splice(index, 1);
+                localStorage.setItem('banco_clientes', JSON.stringify(clientes));
+                atualizarSelectClientesFormulario();
+                renderizarListaClientesTela();
+            }
+        }
+
+        function renderizarListaLotes() {
+            const container = id('lista-lotes-ativos');
+            if(!container) return;
+            const lotes = JSON.parse(localStorage.getItem('banco_lotes')) || LOTES_PADRAO;
+            container.innerHTML = '';
+            if (lotes.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Nenhum lote ativo cadastrado.</p>`; return;
+            }
+            lotes.forEach(lote => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-800">📦 ${lote.nome}</span>
+                            <span class="text-xs text-gray-400">${lote.aves} Galinhas ativas</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="editarLote(${lote.id})" class="text-[10px] bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2.5 py-1 rounded-md transition-colors shadow-sm">Editar</button>
+                            <button onclick="removerLote(${lote.id})" class="text-[10px] bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2.5 py-1 rounded-md transition-colors shadow-sm">Excluir</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function salvarNovoLote() {
+            const inputNome = id('input-lote-nome'); const inputQtd = id('input-lote-qtd');
+            const nome = inputNome.value.trim(); const qtd = parseInt(inputQtd.value);
+            if (nome === "" || isNaN(qtd) || qtd <= 0) { alert("Preencha o nome do lote e uma quantidade válida."); return; }
+            let lotes = JSON.parse(localStorage.getItem('banco_lotes')) || LOTES_PADRAO;
+            lotes.push({ id: Date.now(), nome: nome, aves: qtd });
+            localStorage.setItem('banco_lotes', JSON.stringify(lotes));
+            inputNome.value = ''; inputQtd.value = '';
+            renderizarListaLotes(); atualizarTelas();
+        }
+
+        function editarLote(idLote) {
+            let lotes = JSON.parse(localStorage.getItem('banco_lotes')) || LOTES_PADRAO;
+            const lote = lotes.find(l => l.id === idLote);
+            if (lote) {
+                const novoNome = prompt(`Editar nome do lote:`, lote.nome);
+                if (novoNome === null) return;
+                const novaQtd = prompt(`Quantidade atual de galinhas neste lote (ajuste se alguma morreu):`, lote.aves);
+                if (novaQtd === null) return;
+                const qtdFormatada = parseInt(novaQtd);
+                if (novoNome.trim() !== "" && !isNaN(qtdFormatada) && qtdFormatada >= 0) {
+                    lote.nome = novoNome.trim(); lote.aves = qtdFormatada;
+                    localStorage.setItem('banco_lotes', JSON.stringify(lotes));
+                    renderizarListaLotes(); atualizarTelas();
+                } else { alert("Dados inválidos."); }
+            }
+        }
+
+        function removerLote(idLote) {
+            if (confirm("Tem certeza que deseja apagar este lote?")) {
+                let lotes = JSON.parse(localStorage.getItem('banco_lotes')) || LOTES_PADRAO;
+                lotes = lotes.filter(l => l.id !== idLote);
+                localStorage.setItem('banco_lotes', JSON.stringify(lotes));
+                renderizarListaLotes(); atualizarTelas();
+            }
+        }
+
+        function navegarPara(tela) {
+            const telas = ['tela-dashboard', 'tela-postura', 'tela-financeiro', 'tela-vendas', 'tela-novo-pedido', 'tela-clientes', 'tela-lotes'];
+            telas.forEach(t => id(t).style.display = 'none');
+            id('barra-inferior').style.display = 'flex';
+
+            if (tela === 'dashboard') id('tela-dashboard').style.display = 'block';
+            else if (tela === 'postura') { id('tela-postura').style.display = 'block'; setTimeout(inicializarGrafico, 50); }
+            else if (tela === 'financeiro') { id('tela-financeiro').style.display = 'block'; setTimeout(inicializarGraficoFinanceiro, 50); }
+            else if (tela === 'vendas') id('tela-vendas').style.display = 'block';
+            else if (tela === 'novo-pedido') { id('tela-novo-pedido').style.display = 'block'; id('barra-inferior').style.display = 'none'; atualizarSelectClientesFormulario(); calcularTotalPedido(); }
+            else if (tela === 'clientes') { id('tela-clientes').style.display = 'block'; id('barra-inferior').style.display = 'none'; renderizarListaClientesTela(); }
+            else if (tela === 'lotes') id('tela-lotes').style.display = 'block';
+            
+            aplicarSaudacaoDinamica();
+            atualizarTelas();
+        }
+
+        function configurarDataFormulario() {
+            const inputData = id('form-ped-data');
+            const hoje = new Date();
+            const dia = hoje.getDate().toString().padStart(2, '0');
+            const mes = (hoje.getMonth() + 1).toString().padStart(2, '0');
+            inputData.value = `${hoje.getFullYear()}-${mes}-${dia}`;
+        }
+
+        function calcularTotalPedido() {
+            const qtdInput = id('form-ped-qtd'); let qtd = parseInt(qtdInput.value) || 1;
+            if(qtd < 1) qtd = 1;
+            const total = qtd * obterPrecoUnitario();
+            id('form-ped-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function finalizarPedidoFormulario() {
+            const dataRaw = id('form-ped-data').value; const cliente = id('form-ped-cliente').value;
+            const produto = id('form-ped-produto').value; const qtd = parseInt(id('form-ped-qtd').value) || 1;
+            const status = id('form-ped-status').value; const valorTotal = qtd * obterPrecoUnitario();
+
+            if(!cliente || !dataRaw) { alert("Selecione um cliente cadastrado."); return; }
+            const partesData = dataRaw.split('-'); const dataFormatada = `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
+
+            localStorage.setItem('vendas', (parseInt(localStorage.getItem('vendas')) || 0) + qtd);
+            let listaPedidos = JSON.parse(localStorage.getItem('lista_pedidos')) || [];
+            listaPedidos.unshift({ id: Date.now(), cliente: cliente, duzias: qtd, valor: valorTotal, data: dataFormatada, status: status });
+            localStorage.setItem('lista_pedidos', JSON.stringify(listaPedidos));
+
+            if (status === 'Pago') {
+                let finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+                finHistorico.unshift({ id: Date.now()+1, descricao: `Venda - ${cliente} (${produto})`, valor: valorTotal, data: `${partesData[2]}/${partesData[1]}`, tipo: 'entrada' });
+                localStorage.setItem('fin_historico', JSON.stringify(finHistorico));
+            }
+            id('form-ped-qtd').value = 1; configurarDataFormulario(); navegarPara('vendas');
+        }
+
+        function marcarPedidoComoPago(idPedido) {
+            let listaPedidos = JSON.parse(localStorage.getItem('lista_pedidos')) || [];
+            const pedido = listaPedidos.find(p => p.id === idPedido);
+            if (pedido && pedido.status === 'Pendente') {
+                pedido.status = 'Pago'; localStorage.setItem('lista_pedidos', JSON.stringify(listaPedidos));
+                let finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+                const hoje = new Date(); const dataFin = `${hoje.getDate().toString().padStart(2, '0')}/${(hoje.getMonth() + 1).toString().padStart(2, '0')}`;
+                finHistorico.unshift({ id: Date.now(), descricao: `Venda - ${pedido.cliente} (Ovos)`, valor: pedido.valor, data: dataFin, tipo: 'entrada' });
+                localStorage.setItem('fin_historico', JSON.stringify(finHistorico));
+                atualizarTelas(); if(meuGraficoFin) { updateGraficoFinanceiro(); }
+            }
+        }
+
+        function salvarProducaoDiaria() {
+            const input = id('input-ovos'); const qtd = parseInt(input.value);
+            if (!isNaN(qtd) && qtd >= 0) {
+                const agora = new Date(); const dataFormatada = `${agora.getDate().toString().padStart(2, '0')}/${(agora.getMonth() + 1).toString().padStart(2, '0')} às ${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`;
+                let historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+                historicoCompleto.unshift({ id: Date.now(), data: dataFormatada, quantity: qtd });
+                localStorage.setItem('historico_completo_ovos', JSON.stringify(historicoCompleto));
+                localStorage.setItem('ovos_hoje', qtd); input.value = ''; atualizarTelas(); if(meuGrafico) { updateGrafico(); }
+            }
+        }
+
+        function excluirItem(itemId) {
+            if(confirm("Deseja apagar esse registro?")) {
+                let historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+                historicoCompleto = historicoCompleto.filter(item => item.id !== itemId);
+                localStorage.setItem('historico_completo_ovos', JSON.stringify(historicoCompleto));
+                localStorage.setItem('ovos_hoje', historicoCompleto.length > 0 ? historicoCompleto[0].quantity : 0);
+                atualizarTelas(); if(meuGrafico) { updateGrafico(); }
+            }
+        }
+
+        function editarItem(itemId) {
+            let historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+            const item = historicoCompleto.find(item => item.id === itemId);
+            if(item) {
+                const novaQtd = prompt(`Alterar ovos do dia ${item.data}:`, item.quantity);
+                if(novaQtd !== null && !isNaN(novaQtd) && novaQtd >= 0) {
+                    item.quantity = parseInt(novaQtd); localStorage.setItem('historico_completo_ovos', JSON.stringify(historicoCompleto));
+                    if(historicoCompleto[0].id === itemId) { localStorage.setItem('ovos_hoje', novaQtd); }
+                    atualizarTelas(); if(meuGrafico) { updateGrafico(); }
+                }
+            }
+        }
+
+        function salvarFinanceiro(tipo) {
+            const descInput = id('input-fin-descricao'); const valorInput = id('input-fin-valor');
+            const descricao = descInput.value.trim() || (tipo === 'entrada' ? 'Receita' : 'Despesa');
+            let valor = parseFloat(valorInput.value);
+            if (!isNaN(valor) && valor > 0) {
+                if (tipo === 'saida') { valor = -valor; }
+                const agora = new Date(); const dataFormatada = `${agora.getDate().toString().padStart(2, '0')}/${(agora.getMonth() + 1).toString().padStart(2, '0')}`;
+                let finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+                finHistorico.unshift({ id: Date.now(), descricao: descricao, valor: valor, data: dataFormatada, tipo: tipo });
+                localStorage.setItem('fin_historico', JSON.stringify(finHistorico));
+                descInput.value = ''; valorInput.value = ''; atualizarTelas(); if(meuGraficoFin) { updateGraficoFinanceiro(); }
+            } else { alert('Digite um valor válido.'); }
+        }
+
+        function excluirFin(finId) {
+            if(confirm("Deseja apagar esse lançamento?")) {
+                let finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+                finHistorico = finHistorico.filter(item => item.id !== finId);
+                localStorage.setItem('fin_historico', JSON.stringify(finHistorico));
+                atualizarTelas(); if(meuGraficoFin) { updateGraficoFinanceiro(); }
+            }
+        }
+
+        function editarFin(finId) {
+            let finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+            const item = finHistorico.find(item => item.id === finId);
+            if(item) {
+                const novoValor = prompt(`Alterar o valor de "${item.descricao}":`, Math.abs(item.valor));
+                if(novoValor !== null && !isNaN(novoValor) && novoValor > 0) {
+                    item.valor = item.tipo === 'saida' ? -parseFloat(novoValor) : parseFloat(novoValor);
+                    localStorage.setItem('fin_historico', JSON.stringify(finHistorico));
+                    atualizarTelas(); if(meuGraficoFin) { updateGraficoFinanceiro(); }
+                }
+            }
+        }
+
+        // ================= ATUALIZAÇÃO GERAL E LÓGICA DE DÍVIDAS =================
+        function atualizarTelas() {
+            const ovosHoje = parseInt(localStorage.getItem('ovos_hoje')) || 0;
+            const vendas = parseInt(localStorage.getItem('vendas')) || 0;
+            const historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+            const finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+            const listaPedidos = JSON.parse(localStorage.getItem('lista_pedidos')) || [];
+            const lotesSalvos = JSON.parse(localStorage.getItem('banco_lotes')) || LOTES_PADRAO;
+            
+            let totalGalinhas = 0; lotesSalvos.forEach(l => { totalGalinhas += l.aves; });
+
+            let totalEntradas = 0; let totalSaidas = 0;
+            finHistorico.forEach(item => {
+                if(item.tipo === 'entrada') totalEntradas += item.valor;
+                if(item.tipo === 'saida') totalSaidas += Math.abs(item.valor);
+            });
+            const lucroDoMes = totalEntradas - totalSaidas;
+            localStorage.setItem('financas', lucroDoMes);
+
+            id('dash-ovos').innerText = ovosHoje;
+            id('dash-galinhas').innerText = totalGalinhas;
+            
+            // Controle do Painel de Lucro
+            const dashLucroDiv = id('dash-lucro'); const dashLucroTag = id('dash-lucro-tag');
+            dashLucroDiv.innerText = `R$ ${lucroDoMes.toFixed(2).replace('.', ',')}`;
+            if(lucroDoMes >= 0) {
+                dashLucroDiv.className = "text-2xl font-bold text-emerald-500";
+                dashLucroTag.className = "bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 py-0.5 rounded";
+                dashLucroTag.innerText = "↑ Lucro";
+            } else {
+                dashLucroDiv.className = "text-2xl font-bold text-rose-500";
+                dashLucroTag.className = "bg-rose-100 text-rose-700 text-[10px] font-bold px-1.5 py-0.5 rounded";
+                dashLucroTag.innerText = "↓ Prejuízo";
+            }
+
+            // Lógica Atualizada da Despesa (Avisa se está devendo/negativo no mês)
+            const dashDespesaDiv = id('dash-despesa'); const dashDespesaTag = id('dash-despesa-tag');
+            dashDespesaDiv.innerText = `R$ ${totalSaidas.toFixed(2).replace('.', ',')}`;
+            if(lucroDoMes < 0) {
+                dashDespesaDiv.className = "text-2xl font-bold text-rose-600";
+                dashDespesaTag.className = "bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded";
+                dashDespesaTag.innerText = "⚠️ Devendo";
+            } else {
+                dashDespesaDiv.className = "text-2xl font-bold text-gray-700";
+                dashDespesaTag.className = "bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded";
+                dashDespesaTag.innerText = "Contas em dia";
+            }
+
+            id('btn-ovos-txt').innerText = `${ovosHoje} hoje`;
+            id('btn-financas-txt').innerText = `R$ ${lucroDoMes.toFixed(2).replace('.', ',')}`;
+            id('btn-lotes-txt').innerText = `${lotesSalvos.length} ativos`;
+            id('btn-vendas-txt').innerText = `${vendas} un/dúz`;
+
+            const finLucroCard = id('fin-lucro-card');
+            finLucroCard.innerText = `R$ ${lucroDoMes.toFixed(2).replace('.', ',')}`;
+            finLucroCard.className = lucroDoMes >= 0 ? "text-4xl font-extrabold text-emerald-600 my-2" : "text-4xl font-extrabold text-rose-600 my-2";
+            id('fin-card-receita').innerText = `R$ ${totalEntradas.toFixed(2).replace('.', ',')}`;
+            id('fin-card-despesa').innerText = `R$ ${totalSaidas.toFixed(2).replace('.', ',')}`;
+
+            // HISTÓRICO POSTURA
+            const listaDiv = id('lista-historico');
+            if(historicoCompleto.length > 0) {
+                const quantidades = historicoCompleto.map(item => item.quantity);
+                id('meta-media').innerText = (quantidades.reduce((a,b)=>a+b,0) / quantidades.length).toFixed(0);
+                id('meta-melhor').innerText = Math.max(...quantidades); id('meta-pior').innerText = Math.min(...quantidades);
+                id('meta-taxa').innerText = totalGalinhas > 0 ? `${((ovosHoje / totalGalinhas) * 100).toFixed(0)}%` : '0%';
+
+                listaDiv.innerHTML = '';
+                historicoCompleto.forEach(item => {
+                    listaDiv.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border border-gray-100">
+                            <div class="flex flex-col"><span class="text-xs font-bold text-gray-700">🥚 ${item.quantity} ovos</span><span class="text-[10px] text-gray-400">${item.data}</span></div>
+                            <div class="flex gap-1">
+                                <button onclick="editarItem(${item.id})" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-semibold">Editar</button>
+                                <button onclick="excluirItem(${item.id})" class="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded font-semibold">Excluir</button>
+                            </div>
+                        </div>`;
+                });
+            } else if (listaDiv) { listaDiv.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Nenhuma coleta registrada.</p>`; }
+
+            // HISTÓRICO FINANCEIRO
+            const finListaDiv = id('lista-fin-historico');
+            if(finHistorico.length > 0) {
+                finListaDiv.innerHTML = '';
+                finHistorico.forEach(item => {
+                    const corValor = item.tipo === 'entrada' ? 'text-emerald-500' : 'text-rose-500';
+                    const sinal = item.tipo === 'entrada' ? '+' : '-';
+                    finListaDiv.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border border-gray-100">
+                            <div class="flex flex-col"><span class="text-xs font-bold text-gray-700">${item.descricao}</span><span class="text-[10px] text-gray-400">${item.data}</span></div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold ${corValor}">${sinal} R$ ${Math.abs(item.valor).toFixed(2).replace('.', ',')}</span>
+                                <button onclick="editarFin(${item.id})" class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Editar</button>
+                                <button onclick="excluirFin(${item.id})" class="text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded">Sair</button>
+                            </div>
+                        </div>`;
+                });
+            } else if (finListaDiv) { finListaDiv.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Nenhum lançamento.</p>`; }
+
+            // HISTÓRICO VENDAS
+            const painelVendasDiv = id('lista-pedidos-vendas');
+            if (painelVendasDiv) {
+                if(listaPedidos.length > 0) {
+                    painelVendasDiv.innerHTML = '';
+                    listaPedidos.forEach(item => {
+                        const isPendente = item.status === 'Pendente'; const corStatus = !isPendente ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+                        const elementoStatus = isPendente 
+                            ? `<div class="flex items-center gap-1.5"><span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${corStatus}">${item.status}</span><button onclick="marcarPedidoComoPago(${item.id})" class="text-[10px] font-bold bg-emerald-600 text-white px-2.5 py-0.5 rounded-md shadow-sm">Pago</button></div>`
+                            : `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${corStatus}">${item.status}</span>`;
+
+                        painelVendasDiv.innerHTML += `
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div class="flex flex-col"><span class="text-xs font-bold text-gray-800">👤 ${item.cliente}</span><span class="text-[10px] text-gray-400">${item.duzias} Unid. • ${item.data}</span></div>
+                                <div class="flex flex-col items-end gap-1"><span class="text-xs font-extrabold text-gray-900">R$ ${item.valor.toFixed(2).replace('.', ',')}</span>${elementoStatus}</div>
+                            </div>`;
+                    });
+                } else { painelVendasDiv.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Nenhum pedido lançado.</p>`; }
+            }
+        }
+
+        function inicializarGrafico() {
+            const ctx = id('graficoProducao').getContext('2d');
+            let historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+            let dadosGrafico = historicoCompleto.map(item => item.quantity).reverse();
+            if(dadosGrafico.length === 0) dadosGrafico = [0];
+            if(meuGrafico) meuGrafico.destroy();
+            meuGrafico = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dadosGrafico.map((_, i) => `Reg. ${i+1}`),
+                    datasets: [{ data: dadosGrafico, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.05)', borderWidth: 3, tension: 0.2 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+        function updateGrafico() {
+            let historicoCompleto = JSON.parse(localStorage.getItem('historico_completo_ovos')) || [];
+            let dadosGrafico = historicoCompleto.map(item => item.quantity).reverse();
+            if(dadosGrafico.length === 0) dadosGrafico = [0];
+            meuGrafico.data.labels = dadosGrafico.map((_, i) => `Reg. ${i+1}`); meuGrafico.data.datasets[0].data = dadosGrafico; meuGrafico.update();
+        }
+
+        function inicializarGraficoFinanceiro() {
+            const ctx = id('graficoFinancasBarra').getContext('2d');
+            const finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+            let totalEntradas = 0; let totalSaidas = 0;
+            finHistorico.forEach(item => {
+                if(item.tipo === 'entrada') totalEntradas += item.valor; if(item.tipo === 'saida') totalSaidas += Math.abs(item.valor);
+            });
+            if(meuGraficoFin) meuGraficoFin.destroy();
+            meuGraficoFin = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Balanço'],
+                    datasets: [
+                        { label: 'Receita', data: [totalEntradas], backgroundColor: '#10b981', borderRadius: 4, barPercentage: 0.6 },
+                        { label: 'Despesa', data: [totalSaidas], backgroundColor: '#f43f5e', borderRadius: 4, barPercentage: 0.6 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+            });
+        }
+
+        function updateGraficoFinanceiro() {
+            const finHistorico = JSON.parse(localStorage.getItem('fin_historico')) || [];
+            let totalEntradas = 0; let totalSaidas = 0;
+            finHistorico.forEach(item => {
+                if(item.tipo === 'entrada') totalEntradas += item.valor; if(item.tipo === 'saida') totalSaidas += Math.abs(item.valor);
+            });
+            meuGraficoFin.data.datasets[0].data = [totalEntradas]; meuGraficoFin.data.datasets[1].data = [totalSaidas]; meuGraficoFin.update();
+        }
+    </script>
+<script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('App Pronto!'))
+          .catch(err => console.log('Erro:', err));
+      }
+    </script>
+</body>
+</html>
